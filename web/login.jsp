@@ -16,10 +16,12 @@
 
         <form action="main" method="post">
             <input type="hidden" name="action" value="login"/>
-            <p>Username: <input type="text" name="username" required /><p/>
-            <p>Password: <input type="password" name="password" required /><p/>
+            <p>Username: <input type="text" name="username" required /></p>
+            <p>Password: <input type="password" name="password" required /></p>
             <input type="submit" value="Login"/>
         </form>
+
+        <a href="register.jsp">Create new account</a>
 
         <p style="color:red;">
             ${ERROR}

@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author anvan
  */
-@WebServlet(name = "MainController_1", urlPatterns = {"/MainController_1"})
 public class MainController extends HttpServlet {
 
     /**
@@ -52,8 +51,12 @@ public class MainController extends HttpServlet {
                         url = "CourseController";
                         break;
 
-                    case "adminUsers":
-                        url = "AdminUserController";
+                    case "courseDetail":
+                        url = "CourseDetailController";
+                        break;
+
+                    case "register":
+                        url = "RegisterController";
                         break;
 
                     default:

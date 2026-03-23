@@ -44,6 +44,7 @@ public class CourseController extends HttpServlet {
 
         } catch (Exception e) {
             log("Error at CourseController: " + e.toString());
+            url = "error.jsp";
         }
 
         request.getRequestDispatcher(url).forward(request, response);

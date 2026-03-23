@@ -14,18 +14,20 @@ import utils.DBUtils;
 
 public class CourseDAO {
 
-    public List<CourseDTO> getAllCourses() {
-        List<CourseDTO> list = new ArrayList<>();
+    public ArrayList<CourseDTO> getAllCourses() {
 
-        String sql = "SELECT * FROM Courses";
+        ArrayList<CourseDTO> list = new ArrayList<>();
 
         try {
             Connection conn = DBUtils.getConnection();
+
+            String sql = "SELECT * FROM Courses";
             PreparedStatement ps = conn.prepareStatement(sql);
+
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                CourseDTO course = new CourseDTO(
+                CourseDTO c = new CourseDTO(
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("description"),
@@ -33,7 +35,8 @@ public class CourseDAO {
                         rs.getString("schedule"),
                         rs.getDate("start_date")
                 );
-                list.add(course);
+
+                list.add(c);
             }
 
         } catch (Exception e) {
@@ -41,6 +44,37 @@ public class CourseDAO {
         }
 
         return list;
+    }
+
+    //
+    public CourseDTO getCourseById(int id) {
+
+        try {
+            Connection conn = DBUtils.getConnection();
+
+            String sql = "SELECT * FROM Courses WHERE id=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ps.setInt(1, id);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return new CourseDTO(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("description"),
+                        rs.getDouble("fee"),
+                        rs.getString("schedule"),
+                        rs.getDate("start_date")
+                );
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 }
