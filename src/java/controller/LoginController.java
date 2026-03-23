@@ -4,6 +4,8 @@
  */
 package controller;
 
+import dao.AccountDAO;
+import dto.AccountDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -11,6 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -31,21 +34,29 @@ public class LoginController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet LoginController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet LoginController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+
+        AccountDAO dao = new AccountDAO();
+        AccountDTO user = dao.checkLogin(username, password);
+
+        if (user != null) {
+            HttpSession session = request.getSession();
+            session.setAttribute("LOGIN_USER", user);
+
+            if (user.getRole().equals("admin")) {
+                response.sendRedirect("main?action=adminUsers");
+            } else {
+                response.sendRedirect("main?action=viewCourses");
+            }
+
+        } else {
+            request.setAttribute("ERROR", "Invalid username or password");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *

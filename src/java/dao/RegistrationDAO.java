@@ -5,6 +5,6 @@
 
 package dao;
 
-public class CourseDTO {
+public class RegistrationDAO {
 
 }

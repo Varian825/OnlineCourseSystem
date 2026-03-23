@@ -11,7 +11,12 @@
         <session-timeout>30</session-timeout>
     </session-config>
 
-    <!-- MAIN CONTROLLER (QUAN TRỌNG NHẤT) -->
+    <!-- WELCOME FILE -->
+    <welcome-file-list>
+        <welcome-file>main</welcome-file>
+    </welcome-file-list>
+
+    <!-- MAIN CONTROLLER -->
     <servlet>
         <servlet-name>MainController</servlet-name>
         <servlet-class>controller.MainController</servlet-class>
@@ -20,6 +25,17 @@
     <servlet-mapping>
         <servlet-name>MainController</servlet-name>
         <url-pattern>/main</url-pattern>
+    </servlet-mapping>
+
+    <!-- LOGIN -->
+    <servlet>
+        <servlet-name>LoginController</servlet-name>
+        <servlet-class>controller.LoginController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>LoginController</servlet-name>
+        <url-pattern>/LoginController</url-pattern>
     </servlet-mapping>
 
 </web-app>
