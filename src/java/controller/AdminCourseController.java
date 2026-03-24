@@ -4,13 +4,18 @@
  */
 package controller;
 
+import dao.CourseDAO;
+import dto.AccountDTO;
+import dto.CourseDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -31,18 +36,96 @@ public class AdminCourseController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet AdminCourseController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet AdminCourseController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+
+        HttpSession session = request.getSession();
+        AccountDTO user = (AccountDTO) session.getAttribute("LOGIN_USER");
+
+        if (user == null || !"admin".equals(user.getRole())) {
+            response.sendRedirect("login.jsp");
+            return;
         }
+
+        String action = request.getParameter("subAction");
+        CourseDAO dao = new CourseDAO();
+
+        try {
+
+            if (action != null) {
+                switch (action) {
+
+                    // ================= DELETE =================
+                    case "delete": {
+                        String idStr = request.getParameter("id");
+                        if (idStr != null && idStr.matches("\\d+")) {
+                            int id = Integer.parseInt(idStr);
+                            dao.deleteCourse(id);
+                        }
+                        response.sendRedirect("main?action=adminCourses");
+                        return;
+                    }
+
+                    // ================= ADD =================
+                    case "add": {
+                        String name = request.getParameter("name");
+                        String description = request.getParameter("description");
+                        String feeStr = request.getParameter("fee");
+                        String schedule = request.getParameter("schedule");
+                        String startDate = request.getParameter("startDate");
+
+                        if (name != null && feeStr != null && !feeStr.isEmpty()) {
+                            double fee = Double.parseDouble(feeStr);
+                            dao.addCourse(name, description, fee, schedule, startDate);
+                        }
+
+                        response.sendRedirect("main?action=adminCourses");
+                        return;
+                    }
+
+                    // ================= EDIT =================
+                    case "edit": {
+                        String idStr = request.getParameter("id");
+                        if (idStr != null && idStr.matches("\\d+")) {
+                            int id = Integer.parseInt(idStr);
+                            CourseDTO c = dao.getCourseById(id);
+                            request.setAttribute("EDIT_COURSE", c);
+                        }
+                        break;
+                    }
+
+                    // ================= UPDATE =================
+                    case "update": {
+                        String idStr = request.getParameter("id");
+                        String feeStr = request.getParameter("fee");
+
+                        if (idStr != null && idStr.matches("\\d+") && feeStr != null && !feeStr.isEmpty()) {
+                            int id = Integer.parseInt(idStr);
+
+                            String name = request.getParameter("name");
+                            String description = request.getParameter("description");
+                            double fee = Double.parseDouble(feeStr);
+                            String schedule = request.getParameter("schedule");
+
+                            dao.updateCourse(id, name, description, fee, schedule);
+                        }
+
+                        response.sendRedirect("main?action=adminCourses");
+                        return;
+                    }
+
+                    default:
+                        break;
+                }
+            }
+
+            // ================= LOAD LIST =================
+            ArrayList<CourseDTO> list = dao.getAllCourses();
+            request.setAttribute("COURSE_LIST", list);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        request.getRequestDispatcher("admin-courses.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

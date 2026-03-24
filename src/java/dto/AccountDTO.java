@@ -5,6 +5,7 @@
 package dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class AccountDTO implements Serializable {
 
@@ -16,12 +17,13 @@ public class AccountDTO implements Serializable {
     private String phone;
     private String role;
     private boolean status;
+    private Date createdAt; // ✅ thêm cho chuẩn DB
 
     public AccountDTO() {
     }
 
     public AccountDTO(int id, String username, String password, String fullname,
-            String email, String phone, String role, boolean status) {
+            String email, String phone, String role, boolean status, Date createdAt) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -30,9 +32,10 @@ public class AccountDTO implements Serializable {
         this.phone = phone;
         this.role = role;
         this.status = status;
+        this.createdAt = createdAt;
     }
 
-    // Getter Setter
+    // ===== Getter & Setter =====
     public int getId() {
         return id;
     }
@@ -95,5 +98,13 @@ public class AccountDTO implements Serializable {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 }

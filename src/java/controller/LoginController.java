@@ -34,14 +34,28 @@ public class LoginController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+
+        // ✅ VALIDATE INPUT
+        if (username == null || password == null
+                || username.trim().isEmpty()
+                || password.trim().isEmpty()) {
+
+            request.setAttribute("ERROR", "Please enter username and password");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
 
         AccountDAO dao = new AccountDAO();
         AccountDTO user = dao.checkLogin(username, password);
 
         if (user != null) {
+
             HttpSession session = request.getSession();
+            session.invalidate();
+            session = request.getSession(true);
             session.setAttribute("LOGIN_USER", user);
 
             if ("admin".equals(user.getRole())) {

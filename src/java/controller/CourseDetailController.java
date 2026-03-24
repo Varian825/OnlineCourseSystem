@@ -33,17 +33,27 @@ public class CourseDetailController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+
         String url = "course-detail.jsp";
 
         try {
             String idStr = request.getParameter("id");
 
-            if (idStr != null) {
-                int id = Integer.parseInt(idStr);
+            if (idStr == null || !idStr.matches("\\d+")) {
+                url = "error.jsp";
+                request.getRequestDispatcher(url).forward(request, response);
+                return;
+            }
 
-                CourseDAO dao = new CourseDAO();
-                CourseDTO course = dao.getCourseById(id);
+            int id = Integer.parseInt(idStr);
 
+            CourseDAO dao = new CourseDAO();
+            CourseDTO course = dao.getCourseById(id);
+
+            if (course == null) {
+                request.setAttribute("ERROR", "Course not found");
+                url = "error.jsp";
+            } else {
                 request.setAttribute("COURSE", course);
             }
 

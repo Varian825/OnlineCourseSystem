@@ -15,21 +15,23 @@ public class CourseDTO implements Serializable {
     private double fee;
     private String schedule;
     private Date startDate;
+    private Date createdAt; // ✅ thêm cho chuẩn DB
 
     public CourseDTO() {
     }
 
     public CourseDTO(int id, String name, String description,
-            double fee, String schedule, Date startDate) {
+            double fee, String schedule, Date startDate, Date createdAt) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.fee = fee;
         this.schedule = schedule;
         this.startDate = startDate;
+        this.createdAt = createdAt;
     }
 
-    // Getter Setter
+    // ===== Getter & Setter =====
     public int getId() {
         return id;
     }
@@ -76,5 +78,13 @@ public class CourseDTO implements Serializable {
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 }

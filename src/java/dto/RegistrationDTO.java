@@ -15,19 +15,26 @@ public class RegistrationDTO implements Serializable {
     private String status;
     private Date createdAt;
 
+    // ✅ thêm để JOIN hiển thị
+    private String courseName;
+    private String username;
+
     public RegistrationDTO() {
     }
 
     public RegistrationDTO(int id, int accountId, int courseId,
-            String status, Date createdAt) {
+            String status, Date createdAt,
+            String courseName, String username) {
         this.id = id;
         this.accountId = accountId;
         this.courseId = courseId;
         this.status = status;
         this.createdAt = createdAt;
+        this.courseName = courseName;
+        this.username = username;
     }
 
-    // Getter Setter
+    // ===== Getter & Setter =====
     public int getId() {
         return id;
     }
@@ -66,5 +73,21 @@ public class RegistrationDTO implements Serializable {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

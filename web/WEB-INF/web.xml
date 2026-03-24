@@ -13,7 +13,7 @@
 
     <!-- ================= WELCOME ================= -->
     <welcome-file-list>
-        <welcome-file>login.jsp</welcome-file>
+        <welcome-file>index.jsp</welcome-file>  
     </welcome-file-list>
 
     <!-- ================= MAIN CONTROLLER ================= -->
@@ -26,6 +26,8 @@
         <servlet-name>MainController</servlet-name>
         <url-pattern>/main</url-pattern>
     </servlet-mapping>
+    
+   
 
     <!-- ================= AUTH ================= -->
     <servlet>
@@ -59,6 +61,11 @@
         <servlet-name>RegistrationController</servlet-name>
         <servlet-class>controller.RegistrationController</servlet-class>
     </servlet>
+    
+     <servlet-mapping>
+        <servlet-name>RegisterController</servlet-name>
+        <url-pattern>/RegisterController</url-pattern>
+    </servlet-mapping>
 
     <servlet>
         <servlet-name>MyCourseController</servlet-name>

@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dto.AccountDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -29,13 +30,15 @@ public class MainController extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         response.setContentType("text/html;charset=UTF-8");
+
         String action = request.getParameter("action");
-        String url = "login.jsp";
+        String url = "CourseController";
 
         try {
             if (action == null) {
-                url = "login.jsp";
+                url = "CourseController";
             } else {
                 switch (action) {
 
@@ -47,6 +50,10 @@ public class MainController extends HttpServlet {
                         url = "LogoutController";
                         break;
 
+                    case "register":
+                        url = "RegisterController";
+                        break;
+
                     case "viewCourses":
                         url = "CourseController";
                         break;
@@ -55,20 +62,47 @@ public class MainController extends HttpServlet {
                         url = "CourseDetailController";
                         break;
 
-                    case "register":
-                        url = "RegisterController";
+                    // ===== ADMIN =====
+                    case "adminUsers":
+                        if (isAdmin(request)) {
+                            url = "AdminUserController";
+                        } else {
+                            response.sendRedirect("login.jsp"); // ✅ FIX
+                            return;
+                        }
+                        break;
+
+                    case "adminCourses":
+                        if (isAdmin(request)) {
+                            url = "AdminCourseController";
+                        } else {
+                            response.sendRedirect("login.jsp"); // ✅ FIX
+                            return;
+                        }
                         break;
 
                     default:
-                        url = "error.jsp";
+                        url = "CourseController";
                         break;
                 }
             }
         } catch (Exception e) {
             log("Error at MainController: " + e.toString());
+            url = "error.jsp";
         }
 
         request.getRequestDispatcher(url).forward(request, response);
+    }
+
+    private boolean isAdmin(HttpServletRequest request) {
+        Object obj = request.getSession().getAttribute("LOGIN_USER");
+
+        if (obj == null) {
+            return false;
+        }
+
+        AccountDTO user = (AccountDTO) obj;
+        return "admin".equals(user.getRole());
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

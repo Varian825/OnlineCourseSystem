@@ -4,14 +4,18 @@
     Author     : anvan
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <meta charset="UTF-8">
+        <title>Error</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+
+        <h2 style="color:red;">Something went wrong!</h2>
+
+        <a href="main?action=viewCourses">Back to Home</a>
+
     </body>
 </html>

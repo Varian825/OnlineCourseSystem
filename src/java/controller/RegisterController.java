@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author anvan
  */
+@WebServlet(name = "RegisterController", urlPatterns = {"/RegisterController"})
 public class RegisterController extends HttpServlet {
 
     /**
@@ -31,6 +32,7 @@ public class RegisterController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+
         String url = "register.jsp";
 
         try {
@@ -38,27 +40,35 @@ public class RegisterController extends HttpServlet {
             String password = request.getParameter("password");
             String fullname = request.getParameter("fullname");
 
-            if (username == null || password == null || fullname == null
-                    || username.trim().isEmpty()
-                    || password.trim().isEmpty()
-                    || fullname.trim().isEmpty()) {
-
+            if (username == null || password == null || fullname == null) {
                 request.setAttribute("ERROR", "All fields are required");
+                request.getRequestDispatcher(url).forward(request, response);
+                return;
+            }
+
+            username = username.trim();
+            password = password.trim();
+            fullname = fullname.trim();
+
+            if (username.isEmpty() || password.isEmpty() || fullname.isEmpty()) {
+                request.setAttribute("ERROR", "All fields are required");
+                request.getRequestDispatcher(url).forward(request, response);
+                return;
+            }
+
+            AccountDAO dao = new AccountDAO();
+            boolean check = dao.register(username, password, fullname);
+
+            if (check) {
+                response.sendRedirect("login.jsp");
+                return;
             } else {
-
-                AccountDAO dao = new AccountDAO();
-                boolean check = dao.register(username, password, fullname);
-
-                if (check) {
-                    request.setAttribute("SUCCESS", "Register success! Please login.");
-                    url = "login.jsp";
-                } else {
-                    request.setAttribute("ERROR", "Username already exists");
-                }
+                request.setAttribute("ERROR", "Username already exists");
             }
 
         } catch (Exception e) {
             log("Error at RegisterController: " + e.toString());
+            request.setAttribute("ERROR", "System error");
         }
 
         request.getRequestDispatcher(url).forward(request, response);

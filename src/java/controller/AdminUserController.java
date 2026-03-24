@@ -4,13 +4,17 @@
  */
 package controller;
 
+import dao.AccountDAO;
+import dto.AccountDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -31,18 +35,85 @@ public class AdminUserController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet AdminUserController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet AdminUserController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+
+        HttpSession session = request.getSession();
+        AccountDTO user = (AccountDTO) session.getAttribute("LOGIN_USER");
+
+        if (user == null || !"admin".equals(user.getRole())) {
+            response.sendRedirect("login.jsp");
+            return;
         }
+
+        String action = request.getParameter("subAction");
+
+        AccountDAO dao = new AccountDAO();
+
+        try {
+
+            if (action != null) {
+                switch (action) {
+
+                    case "delete": {
+                        String idStr = request.getParameter("id");
+                        if (idStr != null && idStr.matches("\\d+")) {
+                            int id = Integer.parseInt(idStr);
+                            dao.deleteUser(id);
+                        }
+                        response.sendRedirect("main?action=adminUsers");
+                        return;
+                    }
+
+                    case "add": {
+                        String username = request.getParameter("username");
+                        String password = request.getParameter("password");
+                        String fullname = request.getParameter("fullname");
+                        String role = request.getParameter("role");
+
+                        if (username != null && !username.trim().isEmpty()) {
+                            dao.addUser(username, password, fullname, role);
+                        }
+
+                        response.sendRedirect("main?action=adminUsers");
+                        return;
+                    }
+
+                    case "edit": {
+                        String idStr = request.getParameter("id");
+                        if (idStr != null && idStr.matches("\\d+")) {
+                            int id = Integer.parseInt(idStr);
+                            AccountDTO acc = dao.getUserById(id);
+                            request.setAttribute("EDIT_USER", acc);
+                        }
+                        break;
+                    }
+
+                    case "update": {
+                        String idStr = request.getParameter("id");
+                        if (idStr != null && idStr.matches("\\d+")) {
+                            int id = Integer.parseInt(idStr);
+                            String fullname = request.getParameter("fullname");
+                            String role = request.getParameter("role");
+
+                            dao.updateUser(id, fullname, role);
+                        }
+
+                        response.sendRedirect("main?action=adminUsers");
+                        return;
+                    }
+
+                    default:
+                        break;
+                }
+            }
+
+            ArrayList<AccountDTO> list = dao.getAllUsers();
+            request.setAttribute("USER_LIST", list);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        request.getRequestDispatcher("admin-users.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

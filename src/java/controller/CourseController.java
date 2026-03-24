@@ -6,9 +6,8 @@ package controller;
 
 import dao.CourseDAO;
 import dto.CourseDTO;
+import java.util.ArrayList;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -34,11 +33,21 @@ public class CourseController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+
         String url = "course-list.jsp";
 
         try {
             CourseDAO dao = new CourseDAO();
-            List<CourseDTO> list = dao.getAllCourses();
+
+            ArrayList<CourseDTO> list = dao.getAllCourses();
+
+            if (list == null) {
+                list = new ArrayList<>();
+            }
+
+            if (list.isEmpty()) {
+                request.setAttribute("MESSAGE", "No courses available");
+            }
 
             request.setAttribute("COURSE_LIST", list);
 
